@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client: localhost
--- Généré le: Lun 16 Décembre 2013 à 14:54
+-- Généré le: Lun 16 Décembre 2013 à 15:09
 -- Version du serveur: 5.5.20-log
 -- Version de PHP: 5.3.10
 
@@ -217,13 +217,15 @@ CREATE TABLE IF NOT EXISTS `planning` (
   `date_planning` date NOT NULL,
   `sujet` varchar(30) NOT NULL,
   `id_type_cours` int(11) NOT NULL,
+  `id_salle` int(11) NOT NULL,
   PRIMARY KEY (`id_planning`),
   KEY `id_matiere` (`id_matiere`),
   KEY `id_classe` (`id_classe`),
   KEY `id_prof` (`id_prof`),
   KEY `id_section_journee` (`id_section_journee`),
   KEY `id_type_cours` (`id_type_cours`),
-  KEY `id_classe_2` (`id_classe`)
+  KEY `id_classe_2` (`id_classe`),
+  KEY `id_salle` (`id_salle`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -264,6 +266,28 @@ CREATE TABLE IF NOT EXISTS `prof` (
 INSERT INTO `prof` (`id_prof`, `nom`, `prenom`, `adresse`, `telephone`) VALUES
 (12, 'Oysel', 'Pierre', 'hitema', '0123456789'),
 (13, 'Sylvestre', 'Guillaume', 'azerty', '0123465678');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `salle`
+--
+
+CREATE TABLE IF NOT EXISTS `salle` (
+  `id_salle` int(11) NOT NULL AUTO_INCREMENT,
+  `nom_salle` varchar(15) NOT NULL,
+  PRIMARY KEY (`id_salle`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+
+--
+-- Contenu de la table `salle`
+--
+
+INSERT INTO `salle` (`id_salle`, `nom_salle`) VALUES
+(1, 'trinity'),
+(2, 'vador'),
+(3, 'morpheus'),
+(4, 'serpentard');
 
 -- --------------------------------------------------------
 
@@ -394,6 +418,7 @@ ALTER TABLE `ligne_classe`
 -- Contraintes pour la table `planning`
 --
 ALTER TABLE `planning`
+  ADD CONSTRAINT `planning_ibfk_3` FOREIGN KEY (`id_salle`) REFERENCES `salle` (`id_salle`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_cours` FOREIGN KEY (`id_type_cours`) REFERENCES `type_cours` (`id_type_cours`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_prof` FOREIGN KEY (`id_prof`) REFERENCES `prof` (`id_prof`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_section` FOREIGN KEY (`id_section_journee`) REFERENCES `section_journee` (`id_section_journee`) ON DELETE CASCADE ON UPDATE CASCADE,
