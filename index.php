@@ -1,4 +1,3 @@
-projet-hitema
-=============
-
-Projet PHP Hitema
+<?php
+echo "coucou";
+?>
