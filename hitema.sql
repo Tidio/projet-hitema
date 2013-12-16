@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client: localhost
--- Généré le: Lun 16 Décembre 2013 à 14:34
+-- Généré le: Lun 16 Décembre 2013 à 14:54
 -- Version du serveur: 5.5.20-log
 -- Version de PHP: 5.3.10
 
@@ -235,10 +235,11 @@ CREATE TABLE IF NOT EXISTS `planning` (
 CREATE TABLE IF NOT EXISTS `presence` (
   `id_presence` int(11) NOT NULL AUTO_INCREMENT,
   `id_eleve` int(11) NOT NULL,
-  `id_section_journee` int(11) NOT NULL,
   `present` tinyint(1) NOT NULL,
+  `id_planning` int(11) NOT NULL,
   PRIMARY KEY (`id_presence`),
-  KEY `id_section_journee` (`id_section_journee`)
+  KEY `id_planning` (`id_planning`),
+  KEY `id_eleve` (`id_eleve`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -403,7 +404,8 @@ ALTER TABLE `planning`
 -- Contraintes pour la table `presence`
 --
 ALTER TABLE `presence`
-  ADD CONSTRAINT `presence_ibfk_1` FOREIGN KEY (`id_section_journee`) REFERENCES `section_journee` (`id_section_journee`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `presence_ibfk_2` FOREIGN KEY (`id_eleve`) REFERENCES `eleve` (`id_eleve`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `presence_ibfk_1` FOREIGN KEY (`id_planning`) REFERENCES `planning` (`id_planning`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `stage`
