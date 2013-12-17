@@ -120,5 +120,23 @@ function show_stage_once($maitre){
 	return $liste_stage_once;
 }
 
+function show_all_matiere(){
+    global $dbh;
+    $stmt = $dbh->prepare("SELECT *
+      FROM matiere");
+    $stmt->execute();
+    $listeMatiere = $stmt->fetchAll();
+    return $listeMatiere;
+}
+
+function show_all_classe(){
+        global $dbh;
+        $stmt = $dbh->prepare("SELECT *
+          FROM classe");
+        $stmt->execute();
+        $listeClasse = $stmt->fetchAll();
+        return $listeClasse;
+}
+
 
 ?>
