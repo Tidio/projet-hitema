@@ -25,10 +25,10 @@ require_once('function.php');
 
 				<ul class="nav nav-pills">
 					<li><a href="index.php" >Acceuil</a></li>
-					<li><a href="index.php" >Planning</a></li>
-					<li><a href="index.php" >Présence</a></li>
-					<li><a href="index.php" >Note</a></li>
-					<li><a href="index.php" >Gestion</a></li>
+					<li><a href="index.php?index=planning" >Planning</a></li>
+					<li><a href="index.php?index=presence" >Présence</a></li>
+					<li><a href="index.php?index=note" >Note</a></li>
+					<li><a href="index.php?index=gestion" >Gestion</a></li>
 					<li><a href="deco.php" class='deco'>Deconnexion</a></li>
 				</ul>
 			</nav>
@@ -43,6 +43,10 @@ require_once('function.php');
 			
 			<?php
 				require("news.php");
+				require("planning.php");
+				require("presence.php");
+				require("note.php");
+				require("gestion.php");
 			?>
 			
 		
