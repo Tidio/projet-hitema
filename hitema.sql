@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client: localhost
--- Généré le: Lun 16 Décembre 2013 à 15:09
+-- Généré le: Mar 17 Décembre 2013 à 09:30
 -- Version du serveur: 5.5.20-log
 -- Version de PHP: 5.3.10
 
@@ -54,6 +54,7 @@ INSERT INTO `classe` (`id_classe`, `nom`) VALUES
 
 CREATE TABLE IF NOT EXISTS `devoir` (
   `id_devoir` int(11) NOT NULL AUTO_INCREMENT,
+  `nom_dev` varchar(20) NOT NULL,
   `date_dev` date NOT NULL,
   `coeficient` int(11) NOT NULL,
   `id_matiere` int(11) NOT NULL,
@@ -63,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `devoir` (
   KEY `id_matiere` (`id_matiere`),
   KEY `id_classe` (`id_classe`),
   KEY `id_prof` (`id_prof`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=21 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -78,8 +79,10 @@ CREATE TABLE IF NOT EXISTS `eleve` (
   `date_naissance` date NOT NULL,
   `adresse` varchar(20) NOT NULL,
   `telephone` varchar(10) NOT NULL,
-  PRIMARY KEY (`id_eleve`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
+  `id_login` int(11) NOT NULL,
+  PRIMARY KEY (`id_eleve`),
+  KEY `id_login` (`id_login`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -111,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `evaluation` (
   PRIMARY KEY (`id_eval`),
   KEY `id_devoir` (`id_devoir`),
   KEY `id_eleve` (`id_eleve`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=18 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -138,19 +141,20 @@ CREATE TABLE IF NOT EXISTS `login` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `pseudo` varchar(20) NOT NULL,
   `passe` varchar(256) NOT NULL,
+  `salt` varchar(5) NOT NULL,
   `type` varchar(10) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `type` (`type`),
   KEY `passe` (`passe`),
   KEY `pseudo` (`pseudo`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
 -- Contenu de la table `login`
 --
 
-INSERT INTO `login` (`id`, `pseudo`, `passe`, `type`) VALUES
-(3, 'admin', 'admin', 'admin');
+INSERT INTO `login` (`id`, `pseudo`, `passe`, `salt`, `type`) VALUES
+(3, 'admin', 'admin', '', 'admin');
 
 -- --------------------------------------------------------
 
@@ -162,7 +166,9 @@ CREATE TABLE IF NOT EXISTS `maitre_stage` (
   `id_maitre_stage` int(11) NOT NULL AUTO_INCREMENT,
   `nom_maitre_stage` varchar(30) NOT NULL,
   `tel` varchar(10) NOT NULL,
-  PRIMARY KEY (`id_maitre_stage`)
+  `id_login` int(11) NOT NULL,
+  PRIMARY KEY (`id_maitre_stage`),
+  KEY `id_login` (`id_login`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -256,16 +262,10 @@ CREATE TABLE IF NOT EXISTS `prof` (
   `prenom` varchar(20) NOT NULL,
   `adresse` varchar(30) NOT NULL,
   `telephone` varchar(10) NOT NULL,
-  PRIMARY KEY (`id_prof`)
+  `id_login` int(11) NOT NULL,
+  PRIMARY KEY (`id_prof`),
+  KEY `id_login` (`id_login`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14 ;
-
---
--- Contenu de la table `prof`
---
-
-INSERT INTO `prof` (`id_prof`, `nom`, `prenom`, `adresse`, `telephone`) VALUES
-(12, 'Oysel', 'Pierre', 'hitema', '0123456789'),
-(13, 'Sylvestre', 'Guillaume', 'azerty', '0123465678');
 
 -- --------------------------------------------------------
 
@@ -401,11 +401,17 @@ ALTER TABLE `devoir`
   ADD CONSTRAINT `devoir_ibfk_3` FOREIGN KEY (`id_prof`) REFERENCES `prof` (`id_prof`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Contraintes pour la table `eleve`
+--
+ALTER TABLE `eleve`
+  ADD CONSTRAINT `eleve_ibfk_1` FOREIGN KEY (`id_login`) REFERENCES `eleve` (`id_eleve`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Contraintes pour la table `evaluation`
 --
 ALTER TABLE `evaluation`
-  ADD CONSTRAINT `evaluation_ibfk_2` FOREIGN KEY (`id_eleve`) REFERENCES `eleve` (`id_eleve`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `evaluation_ibfk_1` FOREIGN KEY (`id_devoir`) REFERENCES `classe` (`id_classe`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `evaluation_ibfk_1` FOREIGN KEY (`id_devoir`) REFERENCES `classe` (`id_classe`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `evaluation_ibfk_2` FOREIGN KEY (`id_eleve`) REFERENCES `eleve` (`id_eleve`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `ligne_classe`
@@ -415,22 +421,34 @@ ALTER TABLE `ligne_classe`
   ADD CONSTRAINT `id_eleve` FOREIGN KEY (`id_eleve`) REFERENCES `eleve` (`id_eleve`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Contraintes pour la table `maitre_stage`
+--
+ALTER TABLE `maitre_stage`
+  ADD CONSTRAINT `maitre_stage_ibfk_1` FOREIGN KEY (`id_login`) REFERENCES `login` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Contraintes pour la table `planning`
 --
 ALTER TABLE `planning`
-  ADD CONSTRAINT `planning_ibfk_3` FOREIGN KEY (`id_salle`) REFERENCES `salle` (`id_salle`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_cours` FOREIGN KEY (`id_type_cours`) REFERENCES `type_cours` (`id_type_cours`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_prof` FOREIGN KEY (`id_prof`) REFERENCES `prof` (`id_prof`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_section` FOREIGN KEY (`id_section_journee`) REFERENCES `section_journee` (`id_section_journee`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `planning_ibfk_1` FOREIGN KEY (`id_matiere`) REFERENCES `matiere` (`id_matiere`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `planning_ibfk_2` FOREIGN KEY (`id_classe`) REFERENCES `classe` (`id_classe`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `planning_ibfk_2` FOREIGN KEY (`id_classe`) REFERENCES `classe` (`id_classe`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `planning_ibfk_3` FOREIGN KEY (`id_salle`) REFERENCES `salle` (`id_salle`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `presence`
 --
 ALTER TABLE `presence`
-  ADD CONSTRAINT `presence_ibfk_2` FOREIGN KEY (`id_eleve`) REFERENCES `eleve` (`id_eleve`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `presence_ibfk_1` FOREIGN KEY (`id_planning`) REFERENCES `planning` (`id_planning`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `presence_ibfk_1` FOREIGN KEY (`id_planning`) REFERENCES `planning` (`id_planning`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `presence_ibfk_2` FOREIGN KEY (`id_eleve`) REFERENCES `eleve` (`id_eleve`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `prof`
+--
+ALTER TABLE `prof`
+  ADD CONSTRAINT `prof_ibfk_1` FOREIGN KEY (`id_login`) REFERENCES `login` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `stage`
@@ -446,9 +464,9 @@ ALTER TABLE `stage`
 -- Contraintes pour la table `table_matiere`
 --
 ALTER TABLE `table_matiere`
-  ADD CONSTRAINT `table_matiere_ibfk_3` FOREIGN KEY (`id_classe`) REFERENCES `classe` (`id_classe`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `table_matiere_ibfk_1` FOREIGN KEY (`id_matiere`) REFERENCES `matiere` (`id_matiere`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `table_matiere_ibfk_2` FOREIGN KEY (`id_prof`) REFERENCES `prof` (`id_prof`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `table_matiere_ibfk_2` FOREIGN KEY (`id_prof`) REFERENCES `prof` (`id_prof`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `table_matiere_ibfk_3` FOREIGN KEY (`id_classe`) REFERENCES `classe` (`id_classe`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
