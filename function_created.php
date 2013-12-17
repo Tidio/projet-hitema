@@ -60,6 +60,17 @@ function new_login($pseudo,$passe,$type){
 
 	return $id_log;
 }
+//////// verifie si le login est disponible 
+function dispoflog($login){
+
+	$stmt = $dbh->prepare("SELECT count(*)
+	  FROM login
+	  WHERE login= :login");
+	$stmt->bindValue(":login",$login);
+	$stmt->execute();
+	$dispo = $stmt->fetch();
+	return $dispolog;
+}
 
 //////// ajoute une nouvelle entreprise
 function new_entreprise($nom_entreprise,$adresse_entreprise,$ville_entreprise,$cp_entreprise,$tel_entreprise){
