@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client: localhost
--- Généré le: Mar 17 Décembre 2013 à 09:30
+-- Généré le: Mar 17 Décembre 2013 à 14:23
 -- Version du serveur: 5.5.20-log
 -- Version de PHP: 5.3.10
 
@@ -21,6 +21,22 @@ SET time_zone = "+00:00";
 --
 CREATE DATABASE IF NOT EXISTS `hitema` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 USE `hitema`;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `administrateur`
+--
+
+CREATE TABLE IF NOT EXISTS `administrateur` (
+  `id_ad` int(11) NOT NULL AUTO_INCREMENT,
+  `nom_ad` varchar(20) NOT NULL,
+  `prenom_ad` varchar(20) NOT NULL,
+  `fonction` varchar(20) NOT NULL,
+  `id_login` int(11) NOT NULL,
+  PRIMARY KEY (`id_ad`),
+  KEY `id_login` (`id_login`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -317,20 +333,18 @@ INSERT INTO `section_journee` (`id_section_journee`, `libelle`) VALUES
 
 CREATE TABLE IF NOT EXISTS `stage` (
   `id_entreprise` int(11) NOT NULL,
-  `id_classe` int(11) NOT NULL,
   `date_debut` date NOT NULL,
   `date_fin` date NOT NULL,
-  `id_matiere` int(11) NOT NULL,
+  `id_maitre_stage` int(11) NOT NULL,
   `id_eleve` int(11) NOT NULL,
   `id_type_contrat` int(11) NOT NULL,
   PRIMARY KEY (`id_entreprise`),
-  KEY `numel1` (`id_matiere`),
+  KEY `numel1` (`id_maitre_stage`),
   KEY `id_entreprise` (`id_entreprise`),
   KEY `id_eleve` (`id_eleve`),
-  KEY `id_matiere` (`id_matiere`),
+  KEY `id_matiere` (`id_maitre_stage`),
   KEY `id_type_contrat` (`id_type_contrat`),
-  KEY `id_entreprise_2` (`id_entreprise`),
-  KEY `id_classe` (`id_classe`)
+  KEY `id_entreprise_2` (`id_entreprise`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -393,11 +407,17 @@ INSERT INTO `type_cours` (`id_type_cours`, `nom`) VALUES
 --
 
 --
+-- Contraintes pour la table `administrateur`
+--
+ALTER TABLE `administrateur`
+  ADD CONSTRAINT `administrateur_ibfk_1` FOREIGN KEY (`id_login`) REFERENCES `login` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Contraintes pour la table `devoir`
 --
 ALTER TABLE `devoir`
+  ADD CONSTRAINT `devoir_ibfk_2` FOREIGN KEY (`id_classe`) REFERENCES `ligne_classe` (`id_classe`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `devoir_ibfk_1` FOREIGN KEY (`id_matiere`) REFERENCES `matiere` (`id_matiere`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `devoir_ibfk_2` FOREIGN KEY (`id_classe`) REFERENCES `classe` (`id_classe`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `devoir_ibfk_3` FOREIGN KEY (`id_prof`) REFERENCES `prof` (`id_prof`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -410,8 +430,8 @@ ALTER TABLE `eleve`
 -- Contraintes pour la table `evaluation`
 --
 ALTER TABLE `evaluation`
-  ADD CONSTRAINT `evaluation_ibfk_1` FOREIGN KEY (`id_devoir`) REFERENCES `classe` (`id_classe`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `evaluation_ibfk_2` FOREIGN KEY (`id_eleve`) REFERENCES `eleve` (`id_eleve`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `evaluation_ibfk_2` FOREIGN KEY (`id_eleve`) REFERENCES `ligne_classe` (`id_eleve`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `evaluation_ibfk_1` FOREIGN KEY (`id_devoir`) REFERENCES `devoir` (`id_devoir`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `ligne_classe`
@@ -454,11 +474,10 @@ ALTER TABLE `prof`
 -- Contraintes pour la table `stage`
 --
 ALTER TABLE `stage`
-  ADD CONSTRAINT `fk_classe` FOREIGN KEY (`id_classe`) REFERENCES `classe` (`id_classe`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_eleve` FOREIGN KEY (`id_eleve`) REFERENCES `ligne_classe` (`id_classe`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_contrat` FOREIGN KEY (`id_type_contrat`) REFERENCES `type_contrat` (`id_type_contrat`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_eleve` FOREIGN KEY (`id_eleve`) REFERENCES `eleve` (`id_eleve`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_matiere` FOREIGN KEY (`id_matiere`) REFERENCES `matiere` (`id_matiere`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `id_entreprise` FOREIGN KEY (`id_entreprise`) REFERENCES `entreprise` (`id_entreprise`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `id_entreprise` FOREIGN KEY (`id_entreprise`) REFERENCES `entreprise` (`id_entreprise`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `stage_ibfk_1` FOREIGN KEY (`id_maitre_stage`) REFERENCES `maitre_stage` (`id_maitre_stage`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `table_matiere`
