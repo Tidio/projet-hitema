@@ -36,6 +36,11 @@ function veriflog($login,$mdp){
 	return $type_de_log;
 }
 
+
+
+
+
+
 //////// recupere l'id de l'utilisateur
 function recupid($id,$type){
 
