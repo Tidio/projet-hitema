@@ -20,7 +20,7 @@ function show_all_prof(){
         $listeProf = $stmt->fetchAll();
         return $listeProf;
 }
-
+//////// affiche toute les classe de l'ecole
 function show_all_classe(){
         global $dbh;
         $stmt = $dbh->prepare("SELECT *
