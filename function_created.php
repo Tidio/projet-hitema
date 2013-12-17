@@ -2,7 +2,7 @@
 require_once("db.php");
 
 function new_etudiant($nom,$prenom,$date,$adresse,$tel,$id_log){
-
+	global $dbh;
 	$stmt = $dbh->prepare("INSERT INTO `eleve`( `nomel`, `prenomel`, `date_naissance`, `adresse`, `telephone`,id_login)
 						    VALUES (:nom,:prenom,:datee,:adresse,:tel,:id_log)");
 	$stmt->bindValue(":nom",$nom);
@@ -15,7 +15,7 @@ function new_etudiant($nom,$prenom,$date,$adresse,$tel,$id_log){
 }
 
 function new_prof($nom,$prenom,$adresse,$tel,$id_log){
-
+global $dbh;
 	$stmt = $dbh->prepare("INSERT INTO `prof`( `nom`, `prenom`, `adresse`, `telephone`,id_login)
 						    VALUES (:nom,:prenom,:adresse,:tel,:id_log)");
 	$stmt->bindValue(":nom",$nom);
@@ -27,7 +27,7 @@ function new_prof($nom,$prenom,$adresse,$tel,$id_log){
 }
 
 function new_maitre_stage($nom,$tel,$id_log){
-
+global $dbh;
 	$stmt = $dbh->prepare("INSERT INTO `maitre_stage`( `nom`, `telephone`,id_login)
 						    VALUES (:nom,:prenom,:datee,:adresse,:tel,:id_log)");
 	$stmt->bindValue(":nom",$nom);
@@ -36,7 +36,21 @@ function new_maitre_stage($nom,$tel,$id_log){
 	$stmt->execute();
 }
 
+
+function new_administration($nom,$prenom,$fonction,$id_log){
+global $dbh;
+	$stmt = $dbh->prepare("INSERT INTO `administration`( `nom`,prenom, `fonction`,id_login)
+						    VALUES (:nom,:prenom,:datee,:adresse,:tel,:id_log)");
+	$stmt->bindValue(":nom",$nom);
+	$stmt->bindValue(":prenom",$prenom);
+	$stmt->bindValue(":fonction",$fonction);
+	$stmt->bindValue(":id_log",$id_log);
+	$stmt->execute();
+}
+
+///////// un nouveau login
 function new_login($pseudo,$passe,$type){
+	global $dbh;
 	$stmt = $dbh->prepare("INSERT INTO `login`( `pseudo`, `passe`, `type`) VALUES (:pseudo, :passe, :type)");
 	$stmt->bindValue(":pseudo",$pseudo);
 	$stmt->bindValue(":passe",$passe);
@@ -45,11 +59,11 @@ function new_login($pseudo,$passe,$type){
 	$id_log = $dbh->lastInsertId()
 
 	return $id_log;
-
 }
 
-
+//////// ajoute une nouvelle entreprise
 function new_entreprise($nom_entreprise,$adresse_entreprise,$ville_entreprise,$cp_entreprise,$tel_entreprise){
+	global $dbh;
 	$stmt = $dbh->prepare("INSERT INTO `entreprise`(`nom_entreprise`, `adresse`, `ville`, `cp`, `telephone`) 
 						    VALUES (:nom,:adresse,:ville,:cp,:tel)");
 	$stmt->bindValue(":nom",$nom_entreprise);
@@ -62,8 +76,17 @@ function new_entreprise($nom_entreprise,$adresse_entreprise,$ville_entreprise,$c
 }
 
 
+//////// ajoute une nouvelle eleve dans une classe 
+function new_eleve_classe($id_eleve,$id_classe,$promotion){
+	global $dbh;
+	$stmt = $dbh->prepare("INSERT INTO `ligne_classe`(id_eleve, id_classe, promotion) 
+						    VALUES (:id_eleve,:id_classe,:promotion)");
+	$stmt->bindValue(":id_eleve",$id_eleve);
+	$stmt->bindValue(":id_classe",$id_classe);
+	$stmt->bindValue(":promotion",$promotion);
+	$stmt->execute();
 
-
+}
 
 
 ?>
