@@ -44,39 +44,13 @@ function show_all_maitre_stage(){
 function show_all_admin(){
         global $dbh;
         $stmt = $dbh->prepare("SELECT *
-          FROM admin");
+          FROM admistration");
         $stmt->execute();
         $listeAdmin = $stmt->fetchAll();
         return $listeAdmin;
 }
 
-
-////////   affiche tout les eleves d'une classe
-function show_classe_eleve($classe){
-        global $dbh;
-        $stmt = $dbh->prepare("SELECT *.eleve
-          FROM ligne_classe
-          WHERE eleve.id_eleve = ligne_classe.id_eleve
-          AND id_classe = $classe");
-        $stmt->execute();
-        $liste_eleve_classe = $stmt->fetchAll();
-        return $liste_eleve_classe;
-}
-
-////////   affiche les entreprise,maitre de stage  
-function show_stage($classe){
-        global $dbh;
-        $stmt = $dbh->prepare("SELECT *
-          FROM ligne_classe,maitre_stage,entreprise,stage
-          WHERE ligne_classe.id_eleve = stage.id_eleve
-          AND maitre_stage.id_maitre_stage = stage.id_eleve
-          AND entreprise.id_entreprise = stage.id_entreprise
-          ");
-        $stmt->execute();
-        $liste_eleve_classe = $stmt->fetchAll();
-        return $liste_eleve_classe;
-}
-
+///////// afiche toute les matieres
 function show_matiere(){
     global $dbh;
     $stmt = $dbh->prepare("SELECT *
@@ -87,6 +61,64 @@ function show_matiere(){
 }
 
 
+////////   affiche tout les eleves d'une classe
+function show_classe_eleve($classe){
+	global $dbh;
+	$stmt = $dbh->prepare("SELECT *.eleve
+	  FROM ligne_classe
+	  WHERE eleve.id_eleve = ligne_classe.id_eleve
+	  AND id_classe = $classe");
+	$stmt->execute();
+	$liste_eleve_classe = $stmt->fetchAll();
+	return $liste_eleve_classe;
+}
+
+////////   affiche les entreprise,maitre de stage d'une classe
+function show_stage_classe($classe){
+	global $dbh;
+	$stmt = $dbh->prepare("SELECT *
+	  FROM ligne_classe,maitre_stage,entreprise,stage
+	  WHERE ligne_classe.id_eleve = stage.id_eleve
+	  AND maitre_stage.id_maitre_stage = stage.id_eleve
+	  AND entreprise.id_entreprise = stage.id_entreprise
+	  AND id_classe=$classe
+	  ");
+	$stmt->execute();
+	$liste_eleve_classe = $stmt->fetchAll();
+	return $liste_stage_classe;
+}
+
+////////   affiche les entreprise,maitre de stage d'une classe
+function show_stage($){
+	global $dbh;
+	$stmt = $dbh->prepare("SELECT *
+	  FROM ligne_classe,maitre_stage,entreprise,stage
+	  WHERE ligne_classe.id_eleve = stage.id_eleve
+	  AND maitre_stage.id_maitre_stage = stage.id_eleve
+	  AND entreprise.id_entreprise = stage.id_entreprise
+	  ");
+	$stmt->execute();
+	$liste_eleve_classe = $stmt->fetchAll();
+	return $liste_stage;
+}
+
+
+
+//////// affiche le ou les eleves, entreprise associé au maitre de stage
+function show_stage_once($maitre){
+	global $dbh;
+	$stmt = $dbh->prepare("SELECT *
+	  FROM ligne_classe,maitre_stage,entreprise,stage
+	  WHERE ligne_classe.id_eleve = stage.id_eleve
+	  AND maitre_stage.id_maitre_stage = stage.id_eleve
+	  AND entreprise.id_entreprise = stage.id_entreprise
+	  AND id_maitre_stage = $maitre;
+	  OR nom = $maitre
+	  ");
+	$stmt->execute();
+	$liste_eleve_classe = $stmt->fetchAll();
+	return $liste_stage_once;
+}
 
 
 ?>
