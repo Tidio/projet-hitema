@@ -52,16 +52,17 @@ function show_classe_eleve($classe){
 function show_stage($classe){
 	global $dbh;
 	$stmt = $dbh->prepare("SELECT *
-	  FROM eleve,maitre_stage,entreprise,stage
-	  WHERE eleve.id_eleve = stage.id_eleve
+	  FROM ligne_classe,maitre_stage,entreprise,stage
+	  WHERE ligne_classe.id_eleve = stage.id_eleve
 	  AND maitre_stage.id_maitre_stage = stage.id_eleve
-	  AND eleve.id_eleve = stage.id_eleve
-	  AND eleve.id_eleve = stage.id_eleve
+	  AND entreprise.id_entreprise = stage.id_entreprise
 	  ");
 	$stmt->execute();
 	$liste_eleve_classe = $stmt->fetchAll();
 	return $liste_eleve_classe;
 }
+
+
 
 
 
