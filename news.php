@@ -1,42 +1,17 @@
 <?php
-include('function.php');
-?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-	<meta charset="utf-8">
-	<title>Adminstration-</title>
-	<meta name="description" content="<?php echo $meta_description; ?>">
-<!-- 
-	 <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-	 <link href="css/style.css" type="text/css" rel="stylesheet" />
--->
-</head>
-
-<body>
-
-	<div class="container">
-		<div class="row">
-			<h1>Archi ! | <?php echo $page_title; ?></h1>
-			<table>
-			<?php
-			affich_news();
-				foreach($news as $new)
+if (empty($_GET['index'])) {
+ 		
+ 		$news=affich_news(); //Extraction des news
+				
+				foreach($news as $new) //Affiche les news
 				{
 
-					echo '<tr><li>'.$new['libelle'].'</br>'.$new['content'].'</br>Paru le:'.$new['created_date'].'</li></tr>';
+					echo '<li>'.$new['titre_news'].'</br>'.$new['article_news'].'</br>Paru le&nbsp;:&nbsp;'.$new['date_news'].'</li>';
 				}
 			?>
 		</table>
 		</div>
-	</div>
-		<?php
-		// Test si Session admin activé
-		if($_SESSION['user_type']=="admin"){
+		<?php if(!empty($_SESSION['user_type'])){
 		echo '<a href="add_news.php">Ajouter une news</a>';
 		}
-		?>
-
-</body>
-</html>
-
+	  } ?>
