@@ -1,5 +1,5 @@
 <?php
-if (empty($_GET['index'])) {
+
  		
  		$news=affich_news(); //Extraction des news
 				
@@ -7,11 +7,13 @@ if (empty($_GET['index'])) {
 				{
 
 					echo '<li>'.$new['titre_news'].'</br>'.$new['article_news'].'</br>Paru le&nbsp;:&nbsp;'.$new['date_news'].'</li>';
+					if($_SESSION['user_type']=="administrateur"){
+						echo '<a href="index.php?index=News&news='.$new['id_news'].'">Modifier</a>&nbsp;';
+						echo '&nbsp;<a href="gestion_news.php?news='.$new['id_news'].'&delete=1">Supprimer</a>';
+					}
 				}
 			?>
-		</table>
-		</div>
-		<?php if(!empty($_SESSION['user_type'])){
-		echo '<a href="add_news.php">Ajouter une news</a>';
+		<?php if($_SESSION['user_type']=="administrateur"){
+		echo '</br></br><a href="index.php?index=News">Ajouter une news</a>';
 		}
-	  } ?>
+	  ?>
