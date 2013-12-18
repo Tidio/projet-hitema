@@ -47,9 +47,9 @@ $classes = show_all_classe();
 			</select>
 			<br />
 			<p>Prof</p>
-			<select name"prof">
+			<select name="prof">
 				<?php foreach($profs as $pro) :?>
-				<option value="<?php echo $pro['id_matiere']?>"><?php echo $pro['nommat']?></option>
+				<option value="<?php echo $pro['id_prof']?>"><?php echo $pro['nom']?></option>
 				<?php endforeach; ?>
 			</select>
 			<br />
