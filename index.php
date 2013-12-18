@@ -25,10 +25,10 @@ require_once('function.php');
 
 				<ul class="nav nav-pills">
 					<li><a href="index.php" >Acceuil</a></li>
-					<li><a href="index.php?index=planning" >Planning</a></li>
-					<li><a href="index.php?index=presence" >Présence</a></li>
-					<li><a href="index.php?index=note" >Note</a></li>
-					<li><a href="index.php?index=gestion" >Gestion</a></li>
+					<li><a href="index.php?index=Planning" >Planning</a></li>
+					<li><a href="index.php?index=Presence" >Présence</a></li>
+					<li><a href="index.php?index=Note" >Note</a></li>
+					<li><a href="index.php?index=Gestion" >Gestion</a></li>
 					<li><a href="deco.php" class='deco'>Deconnexion</a></li>
 				</ul>
 			</nav>
@@ -38,18 +38,29 @@ require_once('function.php');
 	</div>
 	<div class="container">
 		<div class="row">
-			<h1>News</h1>
+			<h1><?php if (empty($_GET['index'])){echo 'News';}else{echo $_GET['index'];} ?></h1>
 			<table>
 			
 			<?php
+			if (empty($_GET['index'])) {
 				require("news.php");
-				require("planning.php");
-				require("presence.php");
-				require("note.php");
-				require("gestion.php");
+			}
+			else{
+				if ($_GET['index']=='Planning') {
+				require("planning.php");}
+				if ($_GET['index']=='Presence') {
+				require("presence.php");}
+				if ($_GET['index']=='Note') {
+				require("note.php");}
+				if ($_GET['index']=='Gestion') {
+				require("gestion.php");}
+				if ($_GET['index']=='News') {
+				require("add_news.php");}
+			}
 			?>
+		</table>
 			
-		
+		</div>
 	</div>
 
 <?php endif; ?>
@@ -70,8 +81,8 @@ require_once('function.php');
 		
 			<form type='POST' class='login' action='connexion.php'>
 			 <center>
-			 <b>Login </b><input type='text' name='login' required></br></br>
-			 <b>Mot de Passe </b><input name='mdp' type='password' required></br></br>
+			 <b>Login </b></br><input type='text' name='login' required></br></br>
+			 <b>Mot de Passe </b></br><input name='mdp' type='password' required></br></br>
 			 <input type='submit' value='Connexion'>
 			 </form>
 	<?php endif;//Affichage de l'interface de connexion?>
