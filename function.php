@@ -87,14 +87,159 @@ function salt($login){
 }
 
 
-function extract_info_user($recup_info){
+function extract_info_user($recup_info,$type){
 
 	foreach ($recup_info as $recup) {
-			$_SESSION['id']=$recup['id'];
-			$_SESSION['nom']=$recup['nom'];
-			$_SESSION['prenom']=$recup['prenom'];
-			$_SESSION['id_login']=$recup['id'];
-		;
+			if($type=="eleve"){
+			$_SESSION['id'] = $recup['id_eleve'];
+			$_SESSION['nom'] = $recup['nomel'];
+			$_SESSION['prenom'] = $recup['prenomel'];
+			}
+			elseif($type=="prof"){
+			$_SESSION['id'] = $recup['id_prof'];
+			$_SESSION['nom'] = $recup['nom'];
+			$_SESSION['prenom'] = $recup['prenom'];
+			}
+			elseif($type=="maitre_stage"){
+			$_SESSION['id'] = $recup['id_maitre_stage'];
+			$_SESSION['nom'] = $recup['nom_maitre_stage'];
+			}
+			elseif($type=="administrateur"){
+			$_SESSION['id'] = $recup['id_ad'];
+			$_SESSION['nom'] = $recup['nom_ad'];
+			$_SESSION['prenom'] = $recup['prenom_ad'];
+			}
+		
 		}
 
+}
+
+function modif_news($id){
+
+	global $dbh;
+	$stmt = $dbh->prepare("SELECT *
+	  FROM news
+	  WHERE id_news = :id");
+	//$stmt->bindValue(":type",$type);
+	$stmt->bindValue(":id",$id);
+	$stmt->execute();
+	$news = $stmt->fetchAll();
+	return $news;
+}
+
+	function generateNewPassword(){
+
+		$chars = "23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ";
+		$length = mt_rand(8,12);
+
+		$shuffled = str_shuffle($chars);
+		$pw = substr($shuffled, 0, $length);
+
+		echo $pw;
+		return $pw;
+
+	}
+
+		function generateNewSalt(){
+
+		$chars = "23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ";
+		$length = mt_rand(4,5);
+
+		$shuffled = str_shuffle($chars);
+		$pw = substr($shuffled, 0, $length);
+
+		echo $pw;
+		return $pw;
+
+	}
+
+function show_classe(){
+	
+	global $dbh;
+	$stmt = $dbh->prepare("SELECT *
+	  FROM classe");
+	$stmt->execute();
+	$classe = $stmt->fetchAll();
+	return $classe;
+
+	}
+
+
+function show_salle(){
+	
+	global $dbh;
+	$stmt = $dbh->prepare("SELECT *
+	  FROM salle");
+	$stmt->execute();
+	$salle = $stmt->fetchAll();
+	return $salle;
+
+	}
+
+function planning($classe,$salle,$date_debut,$date_fin){
+
+	global $dbh;
+	if ($salle=="*" and $classe !="*") {
+	  echo"erreur1";
+	  $stmt = $dbh->prepare("SELECT date_planning, pro.nom ,sujet,libelle
+	  FROM planning pla,classe cla,prof pro,section_journee sec,salle sal
+	  WHERE pla.id_prof=pro.id_prof
+	  AND pla.id_classe=cla.id_classe
+	  AND pla.id_section_journee=sec.id_section_journee
+	  AND pla.id_salle=sal.id_salle
+	  AND pla.id_classe=:classe
+	  AND pla.date_planning BETWEEN :debut AND :fin");
+	  $stmt->bindValue(":classe",$classe);
+	  $stmt->bindValue(":debut",$date_debut);
+	  $stmt->bindValue(":fin",$date_fin);
+
+	}
+	elseif ($classe=="*" and $salle!="*") {
+		echo"erreur2";
+   	  $stmt = $dbh->prepare("SELECT date_planning, pro.nom ,sujet,libelle
+	  FROM planning pla,classe cla,prof pro,section_journee sec,salle sal
+	  WHERE pla.id_prof=pro.id_prof
+	  AND pla.id_classe=cla.id_classe
+	  AND pla.id_section_journee=sec.id_section_journee
+	  AND pla.id_salle=sal.id_salle
+	  AND pla.id_salle=:salle
+	  AND pla.date_planning BETWEEN :debut AND :fin");
+	  $stmt->bindValue(":salle",$salle);
+	  $stmt->bindValue(":debut",$date_debut);
+	  $stmt->bindValue(":fin",$date_fin);
+
+	}
+	elseif ($classe=="*" and $salle=="*") {
+		echo"erreur3";
+	$stmt = $dbh->prepare("SELECT date_planning, pro.nom ,sujet,libelle 
+	  FROM planning pla,classe cla,prof pro,section_journee sec,salle sal
+	  WHERE pla.id_prof=pro.id_prof
+	  AND pla.id_classe=cla.id_classe
+	  AND pla.id_section_journee=sec.id_section_journee
+	  AND pla.id_salle=sal.id_salle
+	  AND pla.date_planning BETWEEN :debut AND :fin");
+	$stmt->bindValue(":debut",$date_debut);
+	$stmt->bindValue(":fin",$date_fin);
+	}
+	elseif ($classe!="*" and $salle!="*") {
+		echo"erreur4";
+	$stmt = $dbh->prepare("SELECT date_planning, pro.nom ,sujet,libelle
+	  FROM planning pla,classe cla,prof pro,section_journee sec,salle sal
+	  WHERE pla.id_prof=pro.id_prof
+	  AND pla.id_classe=cla.id_classe
+	  AND pla.id_section_journee=sec.id_section_journee
+	  AND pla.id_salle=sal.id_salle
+	  AND pla.id_classe=:classe
+	  AND pla.id_salle=:salle
+	  AND pla.date_planning BETWEEN :debut AND :fin");
+	$stmt->bindValue(":classe",$classe);
+	$stmt->bindValue(":salle",$salle);
+	$stmt->bindValue(":debut",$date_debut);
+	$stmt->bindValue(":fin",$date_fin);
+	}
+
+
+	$stmt->execute();
+	$planning = $stmt->fetchAll();
+	return $planning;
 }
